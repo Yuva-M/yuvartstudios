@@ -48,17 +48,17 @@ const sans = { fontFamily: "'Inter', system-ui, sans-serif" };
 
 const IMG = {
   living:
-    "/views/hf_20260612_054107_4053e485-47e7-441a-ae72-06d06943f820.png",
+    "/views/hf_20260612_054107_4053e485-47e7-441a-ae72-06d06943f820.jpg",
   bedroom:
     "/views/hf_20260430_115925_6cc0bc2d-2d43-4e5c-9d7a-c6363f2e580d.png",
   hillside:
-    "/views/hf_20260427_055036_d82b386d-f59c-4bda-8f73-c874d27e28e9.png",
+    "/views/hf_20260427_055036_d82b386d-f59c-4bda-8f73-c874d27e28e9.jpg",
   kitchen:
-    "/views/5.png",
+    "/views/5.jpg",
   courtyard:
     "/views/hf_20260520_131755_de822b5c-e32e-48cb-a4ea-bb7c9425a8a4.png",
   coastal:
-    "/views/hf_20260409_060056_73c287fc-f145-4bc8-ac5a-0f95921f8c49.png",
+    "/views/hf_20260409_060056_73c287fc-f145-4bc8-ac5a-0f95921f8c49.jpg",
 };
 
 function Starburst({ size = 36 }: { size?: number }) {

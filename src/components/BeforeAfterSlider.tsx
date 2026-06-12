@@ -13,7 +13,7 @@ const PAIRS: Pair[] = [
     id: "living-swing",
     label: "Obsidian Lounge",
     before: "/views/04718caa-0234-41bd-bd99-39ad799c35ae.jpg",
-    after: "/views/hf_20260612_054107_4053e485-47e7-441a-ae72-06d06943f820.png",
+    after: "/views/hf_20260612_054107_4053e485-47e7-441a-ae72-06d06943f820.jpg",
     caption: "The Obsidian Lounge — Living Area",
   },
   {
@@ -27,7 +27,7 @@ const PAIRS: Pair[] = [
     id: "marble-lobby",
     label: "Marble Lobby",
     before: "/views/70d03355-d28c-4127-95dd-069a16282e99.jpg",
-    after: "/views/hf_20260409_060056_73c287fc-f145-4bc8-ac5a-0f95921f8c49.png",
+    after: "/views/hf_20260409_060056_73c287fc-f145-4bc8-ac5a-0f95921f8c49.jpg",
     caption: "The Marble Lobby — Atrium Entrance",
   }
 ];
