@@ -211,12 +211,42 @@ function ContactForm() {
     [handleFileChange],
   );
 
+  // ── Replace this with your Web3Forms access key ──
+  // Get yours free at https://web3forms.com (enter yuvartstudios@gmail.com)
+  const WEB3FORMS_KEY = "6a13d880-7807-4f5e-a787-5e2fa6cfeba1";
+
   const handleSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setFormState("sending");
-      // Simulate submission — replace with real endpoint when ready
-      setTimeout(() => setFormState("sent"), 1600);
+
+      try {
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        formData.append("access_key", WEB3FORMS_KEY);
+        formData.append("subject", "New Free Preview Request — YUVA Visuals");
+        formData.append("from_name", "YUVA Visuals Website");
+
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          setFormState("sent");
+          form.reset();
+          setFileName(null);
+        } else {
+          console.error("Form submission error:", data);
+          setFormState("idle");
+          alert("Something went wrong. Please try again or email yuvartstudios@gmail.com directly.");
+        }
+      } catch (err) {
+        console.error("Network error:", err);
+        setFormState("idle");
+        alert("Network error. Please try again or email yuvartstudios@gmail.com directly.");
+      }
     },
     [],
   );
