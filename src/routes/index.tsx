@@ -189,27 +189,6 @@ const ACCEPTED_EXTENSIONS = ".skp,.jpg,.jpeg,.png";
 
 function ContactForm() {
   const [formState, setFormState] = useState<"idle" | "sending" | "sent">("idle");
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileChange = useCallback((files: FileList | null) => {
-    if (files && files.length > 0) {
-      setFileName(files[0].name);
-    }
-  }, []);
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setIsDragOver(false);
-      handleFileChange(e.dataTransfer.files);
-      if (fileInputRef.current && e.dataTransfer.files.length > 0) {
-        fileInputRef.current.files = e.dataTransfer.files;
-      }
-    },
-    [handleFileChange],
-  );
 
   // ── Replace this with your Web3Forms access key ──
   // Get yours free at https://web3forms.com (enter yuvartstudios@gmail.com)
@@ -236,7 +215,6 @@ function ContactForm() {
         if (data.success) {
           setFormState("sent");
           form.reset();
-          setFileName(null);
         } else {
           console.error("Form submission error:", data);
           setFormState("idle");
@@ -283,11 +261,11 @@ function ContactForm() {
             </svg>
           </div>
           <h2 style={serif} className="text-3xl md:text-4xl">
-            Project received!
+            Request received!
           </h2>
           <p className="mt-5 text-base leading-relaxed" style={{ color: C.sub }}>
-            Thank you — your scene is being reviewed. You will receive your free
-            graded preview frame at the email you provided within 48 hours.
+            Thank you! We have received your request. We will email you back within 
+            a few hours to get your SketchUp export or screen captures and start on your free preview.
           </p>
         </div>
       </section>
@@ -299,11 +277,11 @@ function ContactForm() {
       <div className="mx-auto max-w-xl">
         <div className="mb-10 text-center">
           <h2 style={serif} className="text-3xl md:text-4xl">
-            Submit your scene
+            Get a Free Preview
           </h2>
           <p className="mt-4 text-base" style={{ color: C.sub }}>
-            Upload a SketchUp export or screenshot and receive a free cinematic
-            preview frame — no commitment required.
+            Submit your project details below. We'll follow up by email to request 
+            your SketchUp viewport screenshot or export and deliver your free cinematic render.
           </p>
         </div>
 
@@ -358,61 +336,18 @@ function ContactForm() {
             </select>
           </div>
 
-          {/* File Upload — Drag & Drop */}
+          {/* Message / File Link */}
           <div>
-            <label style={labelStyle}>Upload Scene File</label>
-            <div
-              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-              onDragLeave={() => setIsDragOver(false)}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click(); }}
-              style={{
-                border: `2px dashed ${isDragOver ? C.accent : C.border}`,
-                borderRadius: 6,
-                padding: "32px 24px",
-                textAlign: "center",
-                cursor: "pointer",
-                backgroundColor: isDragOver ? "rgba(217,119,87,0.04)" : "transparent",
-                transition: "all 0.2s ease",
-              }}
-            >
-              <svg
-                width="32" height="32" viewBox="0 0 24 24" fill="none"
-                stroke={isDragOver ? C.accent : C.sub}
-                strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                style={{ margin: "0 auto 12px" }}
-              >
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              {fileName ? (
-                <p className="text-sm font-medium" style={{ color: C.ink }}>
-                  {fileName}
-                </p>
-              ) : (
-                <>
-                  <p className="text-sm font-medium" style={{ color: C.ink }}>
-                    Drag & drop your file here
-                  </p>
-                  <p className="mt-1 text-xs" style={{ color: C.sub }}>
-                    or click to browse — accepts .skp, .jpg, .png
-                  </p>
-                </>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                name="sceneFile"
-                accept={ACCEPTED_EXTENSIONS}
-                onChange={(e) => handleFileChange(e.target.files)}
-                style={{ display: "none" }}
-                aria-label="Upload a SketchUp, JPG, or PNG file"
-              />
-            </div>
+            <label htmlFor="contact-message" style={labelStyle}>Project Details / File Links</label>
+            <textarea
+              id="contact-message"
+              name="message"
+              rows={4}
+              placeholder="Describe your scene or paste a link to your file (Google Drive, Dropbox, etc.)"
+              style={{ ...inputStyle, resize: "vertical" as const }}
+              onFocus={(e) => (e.target.style.borderColor = C.accent)}
+              onBlur={(e) => (e.target.style.borderColor = C.border)}
+            />
           </div>
 
           {/* Submit */}
@@ -430,7 +365,7 @@ function ContactForm() {
               opacity: formState === "sending" ? 0.7 : 1,
             }}
           >
-            {formState === "sending" ? "Submitting…" : "Submit Project for Free Preview"}
+            {formState === "sending" ? "Submitting…" : "Request Free Preview"}
           </button>
         </form>
       </div>
