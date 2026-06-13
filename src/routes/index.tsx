@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useRef, useState } from "react";
 import { BeforeAfterSlider } from "../components/BeforeAfterSlider";
 
 export const Route = createFileRoute("/")({
@@ -105,12 +106,12 @@ function Monogram({ dark = false }: { dark?: boolean }) {
 }
 
 const WORK = [
-  { src: IMG.living, cap: "The Obsidian Lounge" },
-  { src: IMG.kitchen, cap: "The Sage Kitchen" },
-  { src: IMG.hillside, cap: "Earthy Dining Room" },
-  { src: IMG.bedroom, cap: "The Peacock Lounge" },
-  { src: IMG.courtyard, cap: "Tropical Terrace Balcony" },
-  { src: IMG.coastal, cap: "The Marble Lobby" },
+  { src: IMG.living, cap: "The Obsidian Lounge", alt: "Modern dark-toned living room cinematic architectural render with volumetric lighting by YUVA Visuals" },
+  { src: IMG.kitchen, cap: "The Sage Kitchen", alt: "Contemporary sage green kitchen island cinematic interior render by YUVA Visuals" },
+  { src: IMG.hillside, cap: "Earthy Dining Room", alt: "Modern earthy dining room cinematic architectural render with warm ambient lighting by YUVA Visuals" },
+  { src: IMG.bedroom, cap: "The Peacock Lounge", alt: "Luxurious peacock-themed lounge room photorealistic architectural visualization by YUVA Visuals" },
+  { src: IMG.courtyard, cap: "Tropical Terrace Balcony", alt: "Tropical terrace balcony exterior cinematic architectural render with lush greenery by YUVA Visuals" },
+  { src: IMG.coastal, cap: "The Marble Lobby", alt: "Grand marble lobby atrium photorealistic interior render with natural light by YUVA Visuals" },
 ];
 
 const SERVICES = [
@@ -176,6 +177,237 @@ const PROCESS = [
   },
 ];
 
+const PROJECT_TYPES = [
+  { value: "", label: "Select project type…" },
+  { value: "interior", label: "Interior" },
+  { value: "exterior", label: "Exterior" },
+  { value: "landscape", label: "Landscape" },
+  { value: "other", label: "Other" },
+];
+
+const ACCEPTED_EXTENSIONS = ".skp,.jpg,.jpeg,.png";
+
+function ContactForm() {
+  const [formState, setFormState] = useState<"idle" | "sending" | "sent">("idle");
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = useCallback((files: FileList | null) => {
+    if (files && files.length > 0) {
+      setFileName(files[0].name);
+    }
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
+      handleFileChange(e.dataTransfer.files);
+      if (fileInputRef.current && e.dataTransfer.files.length > 0) {
+        fileInputRef.current.files = e.dataTransfer.files;
+      }
+    },
+    [handleFileChange],
+  );
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setFormState("sending");
+      // Simulate submission — replace with real endpoint when ready
+      setTimeout(() => setFormState("sent"), 1600);
+    },
+    [],
+  );
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "12px 16px",
+    border: `1px solid ${C.border}`,
+    borderRadius: 4,
+    backgroundColor: C.bg,
+    color: C.ink,
+    fontSize: 14,
+    outline: "none",
+    transition: "border-color 0.2s",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: "block",
+    marginBottom: 6,
+    fontSize: 13,
+    fontWeight: 500,
+    color: C.sub,
+    letterSpacing: "0.04em",
+    textTransform: "uppercase" as const,
+  };
+
+  if (formState === "sent") {
+    return (
+      <section id="contact" className="px-6 py-24 text-center md:py-32">
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-6 flex justify-center">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 style={serif} className="text-3xl md:text-4xl">
+            Project received!
+          </h2>
+          <p className="mt-5 text-base leading-relaxed" style={{ color: C.sub }}>
+            Thank you — your scene is being reviewed. You will receive your free
+            graded preview frame at the email you provided within 48 hours.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="contact" className="px-6 py-24 md:py-32">
+      <div className="mx-auto max-w-xl">
+        <div className="mb-10 text-center">
+          <h2 style={serif} className="text-3xl md:text-4xl">
+            Submit your scene
+          </h2>
+          <p className="mt-4 text-base" style={{ color: C.sub }}>
+            Upload a SketchUp export or screenshot and receive a free cinematic
+            preview frame — no commitment required.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Full Name */}
+          <div>
+            <label htmlFor="contact-name" style={labelStyle}>Full Name</label>
+            <input
+              id="contact-name"
+              name="name"
+              type="text"
+              required
+              placeholder="e.g. Alexander Wright"
+              style={inputStyle}
+              onFocus={(e) => (e.target.style.borderColor = C.accent)}
+              onBlur={(e) => (e.target.style.borderColor = C.border)}
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label htmlFor="contact-email" style={labelStyle}>Email Address</label>
+            <input
+              id="contact-email"
+              name="email"
+              type="email"
+              required
+              placeholder="e.g. alex@designfirm.com"
+              style={inputStyle}
+              onFocus={(e) => (e.target.style.borderColor = C.accent)}
+              onBlur={(e) => (e.target.style.borderColor = C.border)}
+            />
+          </div>
+
+          {/* Project Type */}
+          <div>
+            <label htmlFor="contact-type" style={labelStyle}>Project Type</label>
+            <select
+              id="contact-type"
+              name="projectType"
+              required
+              style={{ ...inputStyle, appearance: "none" as const, cursor: "pointer" }}
+              defaultValue=""
+              onFocus={(e) => (e.target.style.borderColor = C.accent)}
+              onBlur={(e) => (e.target.style.borderColor = C.border)}
+            >
+              {PROJECT_TYPES.map((pt) => (
+                <option key={pt.value} value={pt.value} disabled={pt.value === ""}>
+                  {pt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* File Upload — Drag & Drop */}
+          <div>
+            <label style={labelStyle}>Upload Scene File</label>
+            <div
+              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+              onDragLeave={() => setIsDragOver(false)}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click(); }}
+              style={{
+                border: `2px dashed ${isDragOver ? C.accent : C.border}`,
+                borderRadius: 6,
+                padding: "32px 24px",
+                textAlign: "center",
+                cursor: "pointer",
+                backgroundColor: isDragOver ? "rgba(217,119,87,0.04)" : "transparent",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <svg
+                width="32" height="32" viewBox="0 0 24 24" fill="none"
+                stroke={isDragOver ? C.accent : C.sub}
+                strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                style={{ margin: "0 auto 12px" }}
+              >
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              {fileName ? (
+                <p className="text-sm font-medium" style={{ color: C.ink }}>
+                  {fileName}
+                </p>
+              ) : (
+                <>
+                  <p className="text-sm font-medium" style={{ color: C.ink }}>
+                    Drag & drop your file here
+                  </p>
+                  <p className="mt-1 text-xs" style={{ color: C.sub }}>
+                    or click to browse — accepts .skp, .jpg, .png
+                  </p>
+                </>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                name="sceneFile"
+                accept={ACCEPTED_EXTENSIONS}
+                onChange={(e) => handleFileChange(e.target.files)}
+                style={{ display: "none" }}
+                aria-label="Upload a SketchUp, JPG, or PNG file"
+              />
+            </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={formState === "sending"}
+            className="w-full py-3.5 text-sm font-semibold"
+            style={{
+              backgroundColor: formState === "sending" ? C.sub : C.accent,
+              color: "#fff",
+              borderRadius: 4,
+              border: "none",
+              cursor: formState === "sending" ? "wait" : "pointer",
+              transition: "background-color 0.2s",
+              opacity: formState === "sending" ? 0.7 : 1,
+            }}
+          >
+            {formState === "sending" ? "Submitting…" : "Submit Project for Free Preview"}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   return (
     <div style={{ ...sans, backgroundColor: C.bg, color: C.ink }}>
@@ -219,18 +451,18 @@ function Index() {
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
+              href="#contact"
+              className="px-6 py-3 text-sm font-medium"
+              style={{ backgroundColor: C.accent, color: "#fff", borderRadius: 4 }}
+            >
+              Get a Free Preview Frame
+            </a>
+            <a
               href="#work"
               className="px-6 py-3 text-sm font-medium"
               style={{ backgroundColor: C.ink, color: C.bg, borderRadius: 4 }}
             >
               View portfolio
-            </a>
-            <a
-              href="#contact"
-              className="px-6 py-3 text-sm font-medium"
-              style={{ border: `1px solid ${C.ink}`, color: C.ink, borderRadius: 4 }}
-            >
-              Get in touch
             </a>
           </div>
         </div>
@@ -251,6 +483,38 @@ function Index() {
         </div>
       </section>
 
+      {/* FREE PREVIEW OFFER — promoted high up for conversion */}
+      <section className="px-6 pb-20 md:pb-28">
+        <div
+          className="mx-auto max-w-4xl text-center"
+          style={{
+            backgroundColor: C.band,
+            border: `1px solid ${C.border}`,
+            borderRadius: 8,
+            padding: "48px 32px",
+          }}
+        >
+          <div className="mb-4 flex justify-center">
+            <Starburst size={28} />
+          </div>
+          <h2 style={serif} className="text-2xl md:text-3xl">
+            Try it free — on your own project
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed" style={{ color: C.sub }}>
+            Send a SketchUp export or viewport screenshot and receive a
+            professionally graded cinematic preview frame — completely free, no
+            strings attached.
+          </p>
+          <a
+            href="#contact"
+            className="mt-8 inline-block px-8 py-3.5 text-sm font-semibold"
+            style={{ backgroundColor: C.accent, color: "#fff", borderRadius: 4 }}
+          >
+            Submit Your Scene for a Free Frame
+          </a>
+        </div>
+      </section>
+
       {/* SELECTED WORK */}
       <section id="work" className="px-6 pb-24 md:pb-32">
         <div className="mx-auto max-w-6xl">
@@ -263,7 +527,7 @@ function Index() {
                 <div className="overflow-hidden" style={{ borderRadius: 6 }}>
                   <img
                     src={w.src}
-                    alt={w.cap}
+                    alt={w.alt}
                     loading="lazy"
                     className="h-auto w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
                     style={{ aspectRatio: "3 / 2" }}
@@ -350,34 +614,8 @@ function Index() {
         </div>
       </section>
 
-      {/* CONTACT */}
-      <section id="contact" className="px-6 py-24 text-center md:py-32">
-        <div className="mx-auto max-w-2xl">
-          <h2 style={serif} className="text-3xl md:text-5xl">
-            Have a scene ready?
-          </h2>
-          <p className="mt-5 text-base" style={{ color: C.sub }}>
-            Send a SketchUp export and receive a graded preview frame — see the
-            transformation on your own project before committing.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="mailto:yuvartstudios@gmail.com"
-              className="px-6 py-3 text-sm font-medium"
-              style={{ backgroundColor: C.ink, color: C.bg, borderRadius: 4 }}
-            >
-              yuvartstudios@gmail.com
-            </a>
-            <a
-              href="#work"
-              className="px-6 py-3 text-sm font-medium"
-              style={{ border: `1px solid ${C.ink}`, color: C.ink, borderRadius: 4 }}
-            >
-              Back to work
-            </a>
-          </div>
-        </div>
-      </section>
+      {/* CONTACT FORM */}
+      <ContactForm />
 
       {/* FOOTER */}
       <footer style={{ backgroundColor: C.footer, color: "#A8A29A" }} className="px-6 py-16">
@@ -417,7 +655,7 @@ function Index() {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="mailto:hello@av-visuals.com" className="hover:text-white">
+                <a href="mailto:yuvartstudios@gmail.com" className="hover:text-white">
                   yuvartstudios@gmail.com
                 </a>
               </li>
