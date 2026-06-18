@@ -30,3 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Bun configuration
+bun.lock
+bunfig.toml
